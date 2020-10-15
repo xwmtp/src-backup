@@ -14,4 +14,4 @@ The script outputs two text files per game, which will be saved in the root dire
   * **'levels'** lists all the individual levels and their rules.
 * `[timestamp]_[game]_runs.json` consists of ALL submitted runs of the game, sorted by submit date (most recent first). This includes all categories and subcategories, individual levels, obsolete runs and rejected runs. Values like the category name, variable names, the examiner, the region and the platform are saved as an id string. The game data file can be used to look up the normal names for these entities.
 
-Note that the main game rules (when you click 'main rules' when viewing any rules) are not included! They were added later to SRC and I haven't found a way to retrieve them through the API, so if you want to back those up make sure to save them manually.
+Note that the main game rules (when you click 'game rules' when viewing any rules) are not included! They were added later to SRC and I haven't found a way to retrieve them through the API, so if you want to back those up make sure to save them manually.
