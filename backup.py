@@ -3,10 +3,13 @@ import requests
 import json
 import datetime as dt
 import time
+import sys
 
-GAMES = [] # list the abbreviations of the games to backup (i.e. 'sm64')
+# run the script with the abbreviations of the games to backup as arguments
+GAMES = sys.argv[1:]
 
-DEBUG = False # if set to true, prints url for every api request
+# if set to True, prints url for every api request
+DEBUG = False
 
 class Endpoint:
 
@@ -16,7 +19,6 @@ class Endpoint:
         self.max_per_page = max_per_page
         self.base_url = base_url
         self.base_params = base_params if base_params else {}
-
 
     def reset_pagination(self):
         self.page_offset = 0
@@ -43,7 +45,6 @@ class Endpoint:
         self.page_offset += self.max_per_page
         return src_json
 
-
     def _get(self):
         params = self.base_params.copy()
         params.update({
@@ -53,9 +54,7 @@ class Endpoint:
         return get_request(self.base_url, params)
 
 
-
 def get_request(url, params=None, attempts=5):
-
     params = params if params else {}
 
     for i in range(attempts):
@@ -72,6 +71,7 @@ def get_request(url, params=None, attempts=5):
         print(f"Error while accessing {url}: status {status}, after {i+1} attempts.")
 
 
+
 start_time = time.time()
 timestamp = dt.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
 
@@ -84,14 +84,12 @@ for game in GAMES:
         continue
     game_id = game_data['data']['id']
 
-
-
     # all runs of the game (including subcategories, ILs, obsolete, rejected, etc)
     runs_endpoint = Endpoint(f'https://www.speedrun.com/api/v1/runs', {'game' : game_id, 'embed' : 'players', 'orderby' : 'submitted', 'direction' : 'desc'})
     runs_data = runs_endpoint.fetch_all()
-    with open(f"{timestamp}_{game}_runs.txt", 'w') as outfile:
+    with open(f"{timestamp}_{game}_runs.json", 'w') as outfile:
         json.dump(runs_data, outfile)
-    print(f"Downloaded all {len(runs_data['data'])} runs for '{game}' ({timestamp}_{game}_runs.txt).")
+    print(f"Downloaded all {len(runs_data['data'])} runs for '{game}' ({timestamp}_{game}_runs.json)")
 
 
     game_data = {}
@@ -107,10 +105,9 @@ for game in GAMES:
     levels_endpoint = Endpoint(f'https://www.speedrun.com/api/v1/games/{game_id}/levels', {'embed' : 'variables'})
     game_data['levels'] = levels_endpoint.fetch_all()
 
-    with open(f"{timestamp}_{game}_game_data.txt", 'w') as outfile:
+    with open(f"{timestamp}_{game}_game_data.json", 'w') as outfile:
         json.dump(game_data, outfile)
-    print(f"Downloaded game info for '{game}' ({timestamp}_{game}_game_data.txt).")
-
+    print(f"Downloaded game info for '{game}' ({timestamp}_{game}_game_data.json)")
 
 elapsed_time = time.time() - start_time
 print(f"\nFinished in {round(elapsed_time, 1)} seconds.")
