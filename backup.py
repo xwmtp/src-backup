@@ -4,8 +4,9 @@ import json
 import datetime as dt
 import time
 
-GAMES = ['oot', 'ootextras']
-DEBUG = True # print link for every api request
+GAMES = [] # list the abbreviations of the games to backup (i.e. 'sm64')
+
+DEBUG = False # if set to true, prints url for every api request
 
 class Endpoint:
 
